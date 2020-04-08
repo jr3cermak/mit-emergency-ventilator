@@ -30,6 +30,8 @@ LiquidCrystal lcd(LCDrs, LCDen, LCDd4, LCDd5, LCDd6, LCDd7);
 int VENT_MODE = 0;
 
 // Potentiometer Set Point Controls
+// EEPROM Storage: This can be adjusted as EEPROM memory is used
+const int EEPROM_SP_STORE = 0;
 // Define your ADC bit size; in most cases, it is 10 bits
 #define CUSTOM_ADC
 // If you have more bits in your ADC, adjust that here and
@@ -63,6 +65,9 @@ int POT_PRES_SP_STORED = 0;
 /* 
  * If the BUTTON is held on power up, the unit will be reset
  * and placed into Setup mode.
+ * 
+ * System is also placed into setup mode if the EEPROM read
+ * is not sane.
  * 
  * Setup: 
  *  TODO: Perform homing or calibration operations

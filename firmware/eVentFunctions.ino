@@ -6,6 +6,14 @@ void initLCD() {
 }
 
 // Read stored values for ventilator
+// Memory layout in reference to EEPROM_SP_STORE
+// 0    : SERIAL NUMBER
+// 1    : POT_VOLUME_SP_STORE
+// 2    : POT_BPM_SP_STORE
+// 3    : POT_IE_RATIO_STORE
+// 4    : POT_PRES_SP
+// 5    : VENT_MODE
+// TODO: Additional space for calibration values
 void readEEPROM() {
   
 }
