@@ -108,6 +108,8 @@ void setup() {
     // readEEPROM
     readEEPROM();
   }
+  // DEBUG
+  showSplash();
 }
 
 // MAIN PROGRAM
