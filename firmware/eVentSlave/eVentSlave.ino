@@ -24,6 +24,20 @@ const int LCD_ROWS = 2;
 const int LCDrs = 12, LCDen = 11, LCDd4 = 10, LCDd5 = 9, LCDd6 = 8, LCDd7 = 7;
 LiquidCrystal lcd(LCDrs, LCDen, LCDd4, LCDd5, LCDd6, LCDd7);
 
+// MegaMotoPlus Configuration & Pin Assignments
+const int MMP_EnablePin = 13;
+const int MMP_PWMA_Pin = 6;    // Timer 0
+const int MMP_PWMB_Pin = 5;
+const int MMP_Amp_Pin = 0;
+int MMP_Amp_RAW = 0;
+int MMP_Amp_RAW_PEAK = 0;
+float MMP_Amp_SCALED = 0.0;
+// Current Sense Output
+// Half bridge : Vc = I * 0.075
+// Full bridge : Vc = I * 0.0375
+// e-Vent is operating in Full Bridge
+const float MMP_VoltsToAmps = 0.0375;
+
 // Vent Mode
 // 0 = Setup: Homing
 // 1 = Run:   Operational/running with set points
@@ -101,6 +115,8 @@ void setup() {
   // Configure LCD size
   initLCD();
 
+  initMMP();
+
   if (SETPOINT_BUTTON_MODE_HELD_IN_SETUP) {
     // Show spash screen
     showSplash();    
@@ -109,11 +125,33 @@ void setup() {
     readEEPROM();
   }
   // DEBUG
+  // PWM 
+  //  20  5.7A IN=9V OUT=0.55V
+  //  90 20.0A IN=9V OUT=2.60V
+  //  95 20.3A IN=9V OUT=2.75V
+  // 100             OUT=2.87V
+  // 105 22.8A       OUT=3.00V
   showSplash();
+  digitalWrite(MMP_EnablePin, HIGH);
+  analogWrite(MMP_PWMB_Pin, 0);
+  analogWrite(MMP_PWMA_Pin, 20);
 }
 
 // MAIN PROGRAM
-
 void loop() {
-  
+  MMP_Amp_RAW = analogRead(MMP_Amp_Pin);
+  if (MMP_Amp_RAW == 0) {
+    MMP_Amp_RAW_PEAK = 0;
+  } else {
+    if (MMP_Amp_RAW > MMP_Amp_RAW_PEAK) {
+      MMP_Amp_RAW_PEAK = MMP_Amp_RAW;
+    }
+  }
+  MMP_Amp_SCALED = ((MMP_Amp_RAW_PEAK * 5.0) / 1024.0) / MMP_VoltsToAmps;
+  lcd.setCursor(0, 1);
+  lcd.print("R:");
+  lcd.print(MMP_Amp_RAW_PEAK);
+  lcd.print(" A:");
+  lcd.print(MMP_Amp_SCALED);
+  lcd.print("    ");  
 }
