@@ -21,6 +21,7 @@ void readPotVolume() {
 void readSetPointModeButton() {
   SETPOINT_BUTTON_MODE_STATE = digitalRead(SETPOINT_BUTTON_MODE_PIN);
 }
+
 bool modeButtonPressed() {
   if (SETPOINT_BUTTON_MODE_STATE == 1) {
     return true;

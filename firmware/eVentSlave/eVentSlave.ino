@@ -12,6 +12,8 @@
 #include <EEPROM.h>
 // Liquid Crystal library for LCD
 #include <LiquidCrystal.h>
+// I2C
+#include <Wire.h>
 
 // Splash screen stays up until the button is pressed for
 // the first time.
@@ -124,6 +126,10 @@ void setup() {
     // readEEPROM
     readEEPROM();
   }
+  // Configure I2C (Slave)
+  Wire.begin(2);
+  Wire.onReceive(receiveEvent);
+
   // DEBUG
   // PWM 
   //  20  5.7A IN=9V OUT=0.55V
@@ -131,7 +137,7 @@ void setup() {
   //  95 20.3A IN=9V OUT=2.75V
   // 100             OUT=2.87V
   // 105 22.8A       OUT=3.00V
-  showSplash();
+  //showSplash();
   digitalWrite(MMP_EnablePin, HIGH);
   analogWrite(MMP_PWMB_Pin, 0);
   analogWrite(MMP_PWMA_Pin, 20);
@@ -154,4 +160,17 @@ void loop() {
   lcd.print(" A:");
   lcd.print(MMP_Amp_SCALED);
   lcd.print("    ");  
+}
+
+// Test receive
+void receiveEvent(int howMany) {
+  lcd.setCursor(0, 0);
+  //lcd.print("!");
+  while (1 < Wire.available()) {
+    char c = Wire.read();
+    lcd.print(c);
+  }
+  int x = Wire.read();
+  lcd.print(x);
+  lcd.print("   ");
 }

@@ -12,6 +12,8 @@
 #include <EEPROM.h>
 // Liquid Crystal library for LCD
 #include <LiquidCrystal.h>
+// I2C
+#include <Wire.h>
 
 // Splash screen stays up until the button is pressed for
 // the first time.
@@ -86,6 +88,9 @@ int SETPOINT_BUTTON_MODE_HELD_IN_SETUP = 0;
 // ALARM LED/BUZZER
 int ALARM_LED_BUZZER_STATE = 0;
 
+// DEBUG
+int onePass = 0;
+
 // FUNCTIONS
 
 void setup() {
@@ -108,6 +113,8 @@ void setup() {
     // readEEPROM
     readEEPROM();
   }
+  // Configure I2C (Master)
+  Wire.begin();
   // DEBUG
   showSplash();
 }
@@ -115,5 +122,11 @@ void setup() {
 // MAIN PROGRAM
 
 void loop() {
-  
+  if (onePass == 0) {
+    onePass = 1;
+    Wire.beginTransmission(2);
+    Wire.write("X is ");
+    Wire.write(onePass);
+    Wire.endTransmission();
+  }
 }
